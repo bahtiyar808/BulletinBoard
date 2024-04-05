@@ -1,0 +1,14 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+  <h2>Код подтверждения отправлен</h2>
+  <p>Мы отправили вам код подтверждения на вашу электронную почту. Пожалуйста, проверьте вашу почту и введите код ниже.</p>
+  <form method="post" action="{% url 'confirm' %}">
+    {% csrf_token %}
+    <label>
+      <input class="text" type="text" placeholder="Введите код активации" name="confirmation_code">
+    </label>
+
+    <input type="submit" value="Подтвердить">
+  </form>
+{% endblock %}

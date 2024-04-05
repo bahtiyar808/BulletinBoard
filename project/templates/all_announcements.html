@@ -1,0 +1,75 @@
+{% extends 'flatpages/default.html' %}
+{% load account %}
+
+
+{% block content %}
+<h1>Доска объявлений</h1>
+<hr>
+{% if perms.board.add_announcement %}
+<a href="../bb/create/" class="btn btn-outline-primary">Создать объявление</a>
+{% endif %}
+<p>
+       <div class="container mt-4">
+    <div class="row">
+    {% if announcements %}
+
+    {% for announcement in page_obj %}
+        <div class="col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ announcement.heading }}</h5>
+
+                    {% if announcement.user == user %}
+                    <a href="../bb/{{announcement.id}}/edit/" class="btn btn-primary">Изменить</a>
+                    <a href="../bb/{{announcement.id}}/delete/" class="btn btn-danger">Удалить</a>
+                    {% endif %}
+                    <p><a href="../bb/{{announcement.id}}" class="btn btn-info">Подробнее</a></p>
+                    {% if announcement.user != user %}
+                    <form method="post" action="{% url 'response_create' pk=announcement.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="announcement_id" value="{{ announcement.id }}" />
+                        {% if announcement.user_responsed %}
+                            <button disabled class="btn btn-secondary mt-2">Откликнуться</button>
+                        {% else %}
+                        <button type="submit" name="action" value="respond" class="btn btn-success mt-2">Откликнуться</button>
+                        {% endif %}
+                    </form>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+
+    {% endfor %}
+</div>
+ </div>
+</p>
+    {% else %}
+<h3>Объявлений нет!</h3>
+    {% endif %}
+
+
+{% if user.is_authenticated %}
+    <a href="{% url 'account_logout' %}">Выход</a>
+{% else %}
+    <a href="{% url 'account_login' %}">Вход</a>
+{% endif %}
+
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+{% endblock content %}

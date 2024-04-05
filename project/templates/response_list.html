@@ -1,0 +1,45 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Bulletin Board
+{% endblock title %}
+
+{% block content %}
+<h1>Отклики на ваши объявления</h1>
+<hr>
+<form action="" method="get">
+    {{ filterset.form.as_p }}
+    <input type="submit" value="Найти">
+</form>
+<div class="container mt-4">
+    <div class="row">
+        {% if responses %}
+
+        {% for response in responses %}
+        <div class="col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ response.user.username }} откликнулся на <a href="{% url 'announcement_detail' pk=response.announcement.id %}">{{ response.announcement.heading }}</a></h5>
+                    {{ response.text|truncatewords:10 }}
+                    {{ response.date|date:'d.m.Y' }}
+                    {% if response.accepted %}
+                    Объявление принято
+                    {% else %}
+                    <form method="post" action="{% url 'response_accept' pk=response.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success mt-2">Принять</button>
+                    </form>
+                    {% endif %}
+
+                    <a href="{% url 'response_delete' pk=response.id %}" class="btn btn-danger">Удалить</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <h3>У вас пока нет откликов</h3>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

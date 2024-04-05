@@ -1,0 +1,19 @@
+{% extends 'flatpages/default.html' %}
+
+
+{% block title %}
+Announcement
+{% endblock title %}
+
+{% block content %}
+
+
+    <h1>{{announcements.heading}}</h1>
+
+
+    <h3>{{ announcements.text|safe }}</h3>
+
+
+    <p><h4>Дата публикации:
+    {{ announcements.date_time|date:'d.m.Y' }}</h4></p>
+{% endblock content %}
